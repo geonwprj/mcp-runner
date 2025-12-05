@@ -31,7 +31,11 @@ jobs:
       - name: Build and publish
         run: |
           cd ${{ inputs.service }}
-          uv build
-          uv publish --publish-url https://maven.pkg.github.com/${{ github.repository_owner }}
+          uv venv
+          uv pip install build twine
+          uv run -m build
+          uv run -m twine upload dist/* --repository-url https://maven.pkg.github.com/${{ github.repository_owner }} -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
         env:
-          UV_PUBLISH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # UV_PUBLISH_TOKEN is not needed for twine
+          TWINE_USERNAME: ${{ github.actor }}
+          TWINE_PASSWORD: ${{ secrets.GITHUB_TOKEN }}

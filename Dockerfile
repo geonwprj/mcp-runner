@@ -7,7 +7,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 WORKDIR /app
 
 # Copy template project files
-COPY pyproject.toml /app/
+COPY pyproject.toml README.md LICENSE /app/
 
 # Create a virtual environment and install basic dependencies (if any in template)
 RUN uv sync
