@@ -7,7 +7,7 @@ if [ -z "$PYPI_URL" ]; then
 fi
 
 echo "Installing service from $PYPI_URL..."
-uv add "$PYPI_URL"
+pip install "$PYPI_URL"
 
 # Determine the module to run
 if [ -z "$PYPY_MODEL" ]; then
@@ -23,4 +23,4 @@ else
 fi
 
 echo "Running module: $MODULE_NAME"
-exec uv run -m "$MODULE_NAME"
+exec python -m "$MODULE_NAME"
