@@ -15,7 +15,7 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -37,9 +37,10 @@ jobs:
           VERSION=$(grep -m1 'version =' pyproject.toml | cut -d '"' -f2)
           TAG="v$VERSION"
           
+          # Delete existing release and tag if they exist to allow re-running
+          gh release delete "$TAG" --yes --cleanup-tag || true
+          
           # Create release and upload assets
-          # If release exists, this might fail, so we can use '|| true' or check first.
-          # For simplicity in this flow, we attempt to create.
           gh release create "$TAG" dist/* --title "$TAG" --generate-notes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
