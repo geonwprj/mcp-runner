@@ -22,5 +22,7 @@ else
     MODULE_NAME="$PYPY_MODEL"
 fi
 
-echo "Running module: $MODULE_NAME"
-exec python -m "$MODULE_NAME"
+if ! python -m "$MODULE_NAME.main"; then
+    echo "Execution of $MODULE_NAME.main failed. Trying $MODULE_NAME..."
+    exec python -m "$MODULE_NAME"
+fi
