@@ -30,10 +30,16 @@ jobs:
       - name: Build and publish
         run: |
           cd ${{ inputs.service }}
-          pip install build twine
+          pip install build
           python -m build
-          python -m twine upload dist/* --repository-url https://maven.pkg.github.com/${{ github.repository_owner }} -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          
+          # Extract version from pyproject.toml
+          VERSION=$(grep -m1 'version =' pyproject.toml | cut -d '"' -f2)
+          TAG="v$VERSION"
+          
+          # Create release and upload assets
+          # If release exists, this might fail, so we can use '|| true' or check first.
+          # For simplicity in this flow, we attempt to create.
+          gh release create "$TAG" dist/* --title "$TAG" --generate-notes
         env:
-          # UV_PUBLISH_TOKEN is not needed for twine
-          TWINE_USERNAME: ${{ github.actor }}
-          TWINE_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
